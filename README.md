@@ -27,7 +27,9 @@ cd RuoYi-Vue3
 
 # 安装依赖
 yarn --registry=https://registry.npmmirror.com
+```
 
+```bash
 # 启动服务
 yarn dev
 
