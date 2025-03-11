@@ -2,9 +2,9 @@
   <div class="app-container home">
     <el-row :gutter="20">
       <el-col :sm="24" :lg="12" style="padding-left: 20px">
-        <h2>精艺股份后台管理系统</h2>
+        <h2>后台管理系统</h2>
         <p>
-          精艺股份后台管理系统-demo
+          后台管理系统-demo
         </p>
         <p>
           <b>当前版本:</b> <span>v{{ version }}</span>
@@ -58,9 +58,9 @@
             <p>
               <i class="el-icon-s-promotion"></i> 网址：
               <el-link
-                  href="http://www.jingyimetal.com/"
+                  href="http://www.google.com/"
                 target="_blank"
-              >http://www.jingyimetal.com/
+              >http://www.google.com/
               </el-link
               >
             </p>
@@ -76,18 +76,11 @@
           </template>
           <el-collapse accordion>
 
-            <el-collapse-item title="v3.8.10 - 2025-03-04">
+            <el-collapse-item title="v3.9.0 - 2025-03-04">
               <ol>
                 <li>尝试在脚手架上进行修改</li>
               </ol>
             </el-collapse-item>
-
-            <el-collapse-item title="v1.0.0 - 2019-10-08">
-              <ol>
-                <li>若依前后端分离系统正式发布</li>
-              </ol>
-            </el-collapse-item>
-
           </el-collapse>
         </el-card>
       </el-col>
@@ -96,7 +89,7 @@
 </template>
 
 <script setup name="Index">
-const version = ref('3.8.9')
+const version = ref('3.9.0')
 
 function goTarget(url) {
   window.open(url, '__blank')
