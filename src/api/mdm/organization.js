@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询组织管理列表
 export function listOrganization(query) {
     return request({
-        url: '/organization/organization/list',
+        url: '/mdm/organization/list',
         method: 'get',
         params: query
     })
@@ -12,7 +12,7 @@ export function listOrganization(query) {
 // 查询组织管理详细
 export function getOrganization(id) {
     return request({
-        url: '/organization/organization/' + id,
+        url: '/mdm/organization/' + id,
         method: 'get'
     })
 }
@@ -20,7 +20,7 @@ export function getOrganization(id) {
 // 新增组织管理
 export function addOrganization(data) {
     return request({
-        url: '/organization/organization',
+        url: '/mdm/organization',
         method: 'post',
         data: data
     })
@@ -29,7 +29,7 @@ export function addOrganization(data) {
 // 修改组织管理
 export function updateOrganization(data) {
     return request({
-        url: '/organization/organization',
+        url: '/mdm/organization',
         method: 'put',
         data: data
     })
@@ -38,7 +38,7 @@ export function updateOrganization(data) {
 // 删除组织管理
 export function delOrganization(id) {
     return request({
-        url: '/organization/organization/' + id,
+        url: '/mdm/organization/' + id,
         method: 'delete'
     })
 }

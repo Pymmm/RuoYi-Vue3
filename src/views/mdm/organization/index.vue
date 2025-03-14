@@ -30,7 +30,7 @@
             plain
             icon="Plus"
             @click="handleAdd"
-            v-hasPermi="['organization:organization:add']"
+            v-hasPermi="['mdm:organization:add']"
         >新增
         </el-button>
       </el-col>
@@ -41,7 +41,7 @@
             icon="Edit"
             :disabled="single"
             @click="handleUpdate"
-            v-hasPermi="['organization:organization:edit']"
+            v-hasPermi="['mdm:organization:edit']"
         >修改
         </el-button>
       </el-col>
@@ -52,7 +52,7 @@
             icon="Delete"
             :disabled="multiple"
             @click="handleDelete"
-            v-hasPermi="['organization:organization:remove']"
+            v-hasPermi="['mdm:organization:remove']"
         >删除
         </el-button>
       </el-col>
@@ -62,7 +62,7 @@
             plain
             icon="Download"
             @click="handleExport"
-            v-hasPermi="['organization:organization:export']"
+            v-hasPermi="['mdm:organization:export']"
         >导出
         </el-button>
       </el-col>
@@ -78,10 +78,10 @@
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-                     v-hasPermi="['organization:organization:edit']">修改
+                     v-hasPermi="['mdm:organization:edit']">修改
           </el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
-                     v-hasPermi="['organization:organization:remove']">删除
+                     v-hasPermi="['mdm:organization:remove']">删除
           </el-button>
         </template>
       </el-table-column>
@@ -125,7 +125,7 @@ import {
   delOrganization,
   addOrganization,
   updateOrganization
-} from "@/api/organization/organization";
+} from "@/api/mdm/organization";
 
 const {proxy} = getCurrentInstance();
 
@@ -262,7 +262,7 @@ function handleDelete(row) {
 
 /** 导出按钮操作 */
 function handleExport() {
-  proxy.download('organization/organization/export', {
+  proxy.download('mdm/organization/export', {
     ...queryParams.value
   }, `organization_${new Date().getTime()}.xlsx`)
 }
