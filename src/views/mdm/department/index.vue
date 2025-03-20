@@ -155,6 +155,9 @@
     <!-- 添加或修改部门管理对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="departmentRef" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="部门编码" prop="departmentCode">
+          <el-input v-model="form.departmentCode" placeholder="请输入部门编码"/>
+        </el-form-item>
         <el-form-item label="组织编码" prop="organizationCode">
           <el-input v-model="form.organizationCode" placeholder="请输入组织编码"/>
         </el-form-item>
@@ -247,6 +250,9 @@ const data = reactive({
     subUnitName: null,
   },
   rules: {
+    departmentCode: [
+      {required: true, message: "部门编码不能为空", trigger: "blur"}
+    ],
     organizationCode: [
       {required: true, message: "组织编码不能为空", trigger: "blur"}
     ],
