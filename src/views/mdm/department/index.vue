@@ -106,6 +106,18 @@
         >导出
         </el-button>
       </el-col>
+
+      <!-- 新增：导入按钮 -->
+      <el-col :span="1.5">
+        <el-button
+            type="info"
+            plain
+            icon="Upload"
+            @click="handleImport"
+            v-hasPermi="['mdm:department:add']"
+        >导入
+        </el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -172,11 +184,42 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 新增：数据导入对话框 -->
+    <el-dialog title="数据导入" v-model="excelOpen" width="400px" append-to-body>
+      <el-upload
+          ref="uploadRef"
+          class="upload-demo"
+          :action="uploadExcelUrl"
+          :headers="headers"
+          :on-success="handleUploadSuccess"
+          :on-error="handleUploadError"
+          :before-upload="handleBeforeUpload"
+          :limit="1"
+          :auto-upload="false"
+      >
+        <template #trigger>
+          <el-button type="primary">选择文件</el-button>
+        </template>
+
+        <el-button class="ml-3" type="success" @click="submitUpload">
+          上传文件
+        </el-button>
+
+        <template #tip>
+          <div class="el-upload__tip">
+            文件格式：xlsx、xls，文件大小：1M以内
+          </div>
+        </template>
+      </el-upload>
+    </el-dialog>
   </div>
 </template>
 
 <script setup name="Department">
 import {listDepartment, getDepartment, delDepartment, addDepartment, updateDepartment} from "@/api/mdm/department";
+/* 新增:引用 */
+import {getToken} from "@/utils/auth.js";
 
 const {proxy} = getCurrentInstance();
 
@@ -326,6 +369,92 @@ function handleExport() {
   proxy.download('mdm/department/export', {
     ...queryParams.value
   }, `department_${new Date().getTime()}.xlsx`)
+}
+
+/* 新增：打开数据导入对话框 */
+const excelOpen = ref(false);
+
+function handleImport() {
+  excelOpen.value = true;
+}
+
+/* 新增：上传Excel文件 */
+const uploadRef = ref({});
+
+function submitUpload() {
+  uploadRef.value.submit();
+}
+
+/* 新增：上传地址 */
+const uploadExcelUrl = ref(import.meta.env.VITE_APP_BASE_API + "/mdm/department/import");// 上传Excel文件地址
+/* 新增：上传请求头 */
+const headers = ref({Authorization: "Bearer " + getToken()});
+
+/* 新增：上传成功回调 */
+function handleUploadSuccess(res, file) {
+  if (res.code === 200) {
+    proxy.$modal.msgSuccess("上传Excel成功");
+    excelOpen.value = false;
+    getList();
+  } else {
+    proxy.$modal.msgError(res.msg);
+  }
+  uploadRef.value.clearFiles();
+  proxy.$modal.closeLoading();
+}
+
+/* 新增：上传失败回调 */
+function handleUploadError() {
+  proxy.$modal.msgError("上传Excel失败");
+  uploadRef.value.clearFiles();
+  proxy.$modal.closeLoading();
+}
+
+/* 新增：上传前校验 */
+const props = defineProps({
+  modelValue: [String, Object, Array],
+  // 大小限制(MB)
+  fileSize: {
+    type: Number,
+    default: 1,
+  },
+  // 文件类型, 例如['xls', 'xlsx']
+  fileType: {
+    type: Array,
+    default: () => ["xls", "xlsx"],
+  },
+});
+
+/* 新增：上传前loading加载 */
+function handleBeforeUpload(file) {
+  let isExcel = false;
+  if (props.fileType.length) {
+    let fileExtension = "";
+    if (file.name.lastIndexOf(".") > -1) {
+      fileExtension = file.name.slice(file.name.lastIndexOf(".") + 1);
+    }
+    isExcel = props.fileType.some(type => {
+      if (file.type.indexOf(type) > -1) return true;
+      if (fileExtension && fileExtension.indexOf(type) > -1) return true;
+      return false;
+    });
+  }
+  if (!isExcel) {
+    proxy.$modal.msgError(`文件格式不正确，请上传${props.fileType.join("/")}格式文件!`);
+    return false;
+  }
+  if (file.name.includes(',')) {
+    proxy.$modal.msgError('文件名不正确，不能包含英文逗号!');
+    return false;
+  }
+  if (props.fileSize) {
+    const isLt = file.size / 1024 / 1024 < props.fileSize;
+    if (!isLt) {
+      proxy.$modal.msgError(`上传Excel大小不能超过 ${props.fileSize} MB!`);
+      return false;
+    }
+  }
+  proxy.$modal.loading("正在上传Excel，请稍候...");
 }
 
 getList();
