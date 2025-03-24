@@ -58,9 +58,9 @@
             <p>
               <i class="el-icon-s-promotion"></i> 网址：
               <el-link
-                  href="http://www.google.com/"
+                  href="http://www.jingyimetal.com/"
                 target="_blank"
-              >http://www.google.com/
+              >http://www.jingyimetal.com/
               </el-link
               >
             </p>
