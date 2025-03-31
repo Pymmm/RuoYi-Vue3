@@ -10,9 +10,9 @@ export function listEmployee(query) {
 }
 
 // 查询员工管理详细
-export function getEmployee(id) {
+export function getEmployee(employeeCode) {
     return request({
-        url: '/mdm/employee/' + id,
+        url: '/mdm/employee/' + employeeCode,
         method: 'get'
     })
 }
@@ -36,9 +36,9 @@ export function updateEmployee(data) {
 }
 
 // 删除员工管理
-export function delEmployee(id) {
+export function delEmployee(employeeCode) {
     return request({
-        url: '/mdm/employee/' + id,
+        url: '/mdm/employee/' + employeeCode,
         method: 'delete'
     })
 }

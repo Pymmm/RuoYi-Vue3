@@ -83,7 +83,6 @@
 
     <el-table v-loading="loading" :data="employeeList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="员工ID" align="center" prop="id"/>
       <el-table-column label="员工编码" align="center" prop="employeeCode"/>
       <el-table-column label="员工姓名" align="center" prop="employeeName"/>
       <el-table-column label="备注" align="center" prop="remark"/>
@@ -110,9 +109,6 @@
     <!-- 添加或修改员工管理对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="employeeRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="员工编码" prop="employeeCode">
-          <el-input v-model="form.employeeCode" placeholder="请输入员工编码"/>
-        </el-form-item>
         <el-form-item label="员工姓名" prop="employeeName">
           <el-input v-model="form.employeeName" placeholder="请输入员工姓名"/>
         </el-form-item>
@@ -185,9 +181,6 @@ const data = reactive({
     employeeName: null,
   },
   rules: {
-    employeeCode: [
-      {required: true, message: "员工编码不能为空", trigger: "blur"}
-    ],
     employeeName: [
       {required: true, message: "员工姓名不能为空", trigger: "blur"}
     ],
@@ -215,7 +208,6 @@ function cancel() {
 // 表单重置
 function reset() {
   form.value = {
-    id: null,
     employeeCode: null,
     employeeName: null,
     createBy: null,
@@ -241,7 +233,7 @@ function resetQuery() {
 
 // 多选框选中数据
 function handleSelectionChange(selection) {
-  ids.value = selection.map(item => item.id);
+  ids.value = selection.map(item => item.employeeCode);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
 }
@@ -256,8 +248,8 @@ function handleAdd() {
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
-  const _id = row.id || ids.value
-  getEmployee(_id).then(response => {
+  const _employeeCode = row.employeeCode || ids.value
+  getEmployee(_employeeCode).then(response => {
     form.value = response.data;
     open.value = true;
     title.value = "修改员工管理";
@@ -268,7 +260,7 @@ function handleUpdate(row) {
 function submitForm() {
   proxy.$refs["employeeRef"].validate(valid => {
     if (valid) {
-      if (form.value.id != null) {
+      if (form.value.employeeCode != null) {
         updateEmployee(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
@@ -287,9 +279,9 @@ function submitForm() {
 
 /** 删除按钮操作 */
 function handleDelete(row) {
-  const _ids = row.id || ids.value;
-  proxy.$modal.confirm('是否确认删除员工管理编号为"' + _ids + '"的数据项？').then(function () {
-    return delEmployee(_ids);
+  const _employeeCodes = row.employeeCode || ids.value;
+  proxy.$modal.confirm('是否确认删除员工管理编号为"' + _employeeCodes + '"的数据项？').then(function () {
+    return delEmployee(_employeeCodes);
   }).then(() => {
     getList();
     proxy.$modal.msgSuccess("删除成功");
