@@ -17,6 +17,16 @@
             @keyup.enter="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="账号状态" prop="status">
+        <el-select v-model="queryParams.status" placeholder="请选择账号状态" clearable>
+          <el-option
+              v-for="dict in sys_normal_disable"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -85,6 +95,11 @@
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="员工编码" align="center" prop="employeeCode"/>
       <el-table-column label="员工姓名" align="center" prop="employeeName"/>
+      <el-table-column label="账号状态" align="center" prop="status">
+        <template #default="scope">
+          <dict-tag :options="sys_normal_disable" :value="scope.row.status"/>
+        </template>
+      </el-table-column>
       <el-table-column label="备注" align="center" prop="remark"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
@@ -161,6 +176,7 @@ import {listEmployee, getEmployee, delEmployee, addEmployee, updateEmployee} fro
 import {getToken} from "@/utils/auth.js";
 
 const {proxy} = getCurrentInstance();
+const {sys_normal_disable} = proxy.useDict('sys_normal_disable');
 
 const employeeList = ref([]);
 const open = ref(false);
@@ -179,10 +195,14 @@ const data = reactive({
     pageSize: 10,
     employeeCode: null,
     employeeName: null,
+    status: null,
   },
   rules: {
     employeeName: [
       {required: true, message: "员工姓名不能为空", trigger: "blur"}
+    ],
+    status: [
+      {required: true, message: "账号状态不能为空", trigger: "change"}
     ],
   }
 });
@@ -210,6 +230,7 @@ function reset() {
   form.value = {
     employeeCode: null,
     employeeName: null,
+    status: null,
     createBy: null,
     createTime: null,
     updateBy: null,
