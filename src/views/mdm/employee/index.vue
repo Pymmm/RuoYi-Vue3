@@ -127,6 +127,16 @@
         <el-form-item label="员工姓名" prop="employeeName">
           <el-input v-model="form.employeeName" placeholder="请输入员工姓名"/>
         </el-form-item>
+        <el-form-item label="账号状态" prop="status">
+          <el-select v-model="form.status" placeholder="请选择账号状态">
+            <el-option
+                v-for="dict in sys_normal_disable"
+                :key="dict.value"
+                :label="dict.label"
+                :value="parseInt(dict.value)"
+            ></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"/>
         </el-form-item>
