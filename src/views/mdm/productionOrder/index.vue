@@ -18,12 +18,14 @@
         </el-date-picker>
       </el-form-item>
       <el-form-item label="产品类别" prop="productCategory">
-        <el-input
-            v-model="queryParams.productCategory"
-            placeholder="请输入产品类别"
-            clearable
-            @keyup.enter="handleQuery"
-        />
+        <el-select v-model="queryParams.productCategory" placeholder="请选择产品类别" clearable>
+          <el-option
+              v-for="dict in product_category"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="客户名称" prop="customerName">
         <el-input
@@ -145,7 +147,11 @@
           <span>{{ parseTime(scope.row.orderDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="产品类别" align="center" prop="productCategory"/>
+      <el-table-column label="产品类别" align="center" prop="productCategory">
+        <template #default="scope">
+          <dict-tag :options="product_category" :value="scope.row.productCategory"/>
+        </template>
+      </el-table-column>
       <el-table-column label="客户名称" align="center" prop="customerName"/>
       <el-table-column label="规格型号" align="center" prop="specificationModel"/>
       <el-table-column label="重量(KG)" align="center" prop="weightKg"/>
@@ -202,7 +208,14 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item label="产品类别" prop="productCategory">
-          <el-input v-model="form.productCategory" placeholder="请输入产品类别"/>
+          <el-select v-model="form.productCategory" placeholder="请选择产品类别">
+            <el-option
+                v-for="dict in product_category"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="客户名称" prop="customerName">
           <el-input v-model="form.customerName" placeholder="请输入客户名称"/>
@@ -273,7 +286,7 @@ import {
 } from "@/api/mdm/productionOrder";
 
 const {proxy} = getCurrentInstance();
-const {sys_yes_no} = proxy.useDict('sys_yes_no');
+const {product_category, sys_yes_no} = proxy.useDict('product_category', 'sys_yes_no');
 
 const productionOrderList = ref([]);
 const open = ref(false);
@@ -306,7 +319,7 @@ const data = reactive({
       {required: true, message: "下单时间不能为空", trigger: "blur"}
     ],
     productCategory: [
-      {required: true, message: "产品类别不能为空", trigger: "blur"}
+      {required: true, message: "产品类别不能为空", trigger: "change"}
     ],
     customerName: [
       {required: true, message: "客户名称不能为空", trigger: "blur"}
