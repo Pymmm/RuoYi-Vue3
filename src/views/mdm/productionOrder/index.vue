@@ -28,20 +28,24 @@
         </el-select>
       </el-form-item>
       <el-form-item label="客户名称" prop="customerName">
-        <el-input
-            v-model="queryParams.customerName"
-            placeholder="请输入客户名称"
-            clearable
-            @keyup.enter="handleQuery"
-        />
+        <el-select v-model="queryParams.customerName" placeholder="请选择客户名称" clearable>
+          <el-option
+              v-for="dict in customer_name"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="规格型号" prop="specificationModel">
-        <el-input
-            v-model="queryParams.specificationModel"
-            placeholder="请输入规格型号"
-            clearable
-            @keyup.enter="handleQuery"
-        />
+        <el-select v-model="queryParams.specificationModel" placeholder="请选择规格型号" clearable>
+          <el-option
+              v-for="dict in specification_model"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="重量(KG)" prop="weightKg">
         <el-input
@@ -85,6 +89,22 @@
                         type="date"
                         value-format="YYYY-MM-DD"
                         placeholder="请选择生产日期">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item label="创建者" prop="createBy">
+        <el-input
+            v-model="queryParams.createBy"
+            placeholder="请输入创建者"
+            clearable
+            @keyup.enter="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="创建时间" prop="createTime">
+        <el-date-picker clearable
+                        v-model="queryParams.createTime"
+                        type="date"
+                        value-format="YYYY-MM-DD"
+                        placeholder="请选择创建时间">
         </el-date-picker>
       </el-form-item>
       <el-form-item>
@@ -165,8 +185,16 @@
           <dict-tag :options="product_category" :value="scope.row.productCategory"/>
         </template>
       </el-table-column>
-      <el-table-column label="客户名称" align="center" prop="customerName"/>
-      <el-table-column label="规格型号" align="center" prop="specificationModel"/>
+      <el-table-column label="客户名称" align="center" prop="customerName">
+        <template #default="scope">
+          <dict-tag :options="customer_name" :value="scope.row.customerName"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="规格型号" align="center" prop="specificationModel">
+        <template #default="scope">
+          <dict-tag :options="specification_model" :value="scope.row.specificationModel"/>
+        </template>
+      </el-table-column>
       <el-table-column label="重量(KG)" align="center" prop="weightKg"/>
       <el-table-column label="交期" align="center" prop="deliveryDate" width="180">
         <template #default="scope">
@@ -189,6 +217,18 @@
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark"/>
+      <el-table-column label="创建者" align="center" prop="createBy"/>
+      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
+        <template #default="scope">
+          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="更新者" align="center" prop="updateBy"/>
+      <el-table-column label="更新时间" align="center" prop="updateTime" width="180">
+        <template #default="scope">
+          <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
@@ -231,10 +271,24 @@
           </el-select>
         </el-form-item>
         <el-form-item label="客户名称" prop="customerName">
-          <el-input v-model="form.customerName" placeholder="请输入客户名称"/>
+          <el-select v-model="form.customerName" placeholder="请选择客户名称">
+            <el-option
+                v-for="dict in customer_name"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="规格型号" prop="specificationModel">
-          <el-input v-model="form.specificationModel" placeholder="请输入规格型号"/>
+          <el-select v-model="form.specificationModel" placeholder="请选择规格型号">
+            <el-option
+                v-for="dict in specification_model"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="重量(KG)" prop="weightKg">
           <el-input v-model="form.weightKg" placeholder="请输入重量(KG)"/>
@@ -331,7 +385,12 @@ import {
 import {getToken} from "@/utils/auth.js";
 
 const {proxy} = getCurrentInstance();
-const {product_category, sys_yes_no} = proxy.useDict('product_category', 'sys_yes_no');
+const {
+  customer_name,
+  product_category,
+  specification_model,
+  sys_yes_no
+} = proxy.useDict('customer_name', 'product_category', 'specification_model', 'sys_yes_no');
 
 const productionOrderList = ref([]);
 const open = ref(false);
@@ -358,6 +417,9 @@ const data = reactive({
     isPriority: null,
     isProduced: null,
     productionDate: null,
+    remark: null,
+    createBy: null,
+    createTime: null,
   },
   rules: {
     orderDate: [
@@ -367,10 +429,10 @@ const data = reactive({
       {required: true, message: "产品类别不能为空", trigger: "change"}
     ],
     customerName: [
-      {required: true, message: "客户名称不能为空", trigger: "blur"}
+      {required: true, message: "客户名称不能为空", trigger: "change"}
     ],
     specificationModel: [
-      {required: true, message: "规格型号不能为空", trigger: "blur"}
+      {required: true, message: "规格型号不能为空", trigger: "change"}
     ],
     weightKg: [
       {required: true, message: "重量(KG)不能为空", trigger: "blur"}
