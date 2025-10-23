@@ -73,6 +73,16 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="是否加急" prop="isUrgent">
+        <el-select v-model="queryParams.isUrgent" placeholder="请选择是否加急" clearable>
+          <el-option
+              v-for="dict in sys_yes_no"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="是否已生产" prop="isProduced">
         <el-select v-model="queryParams.isProduced" placeholder="请选择是否已生产" clearable>
           <el-option
@@ -206,6 +216,11 @@
           <dict-tag :options="sys_yes_no" :value="scope.row.isPriority"/>
         </template>
       </el-table-column>
+      <el-table-column label="是否加急" align="center" prop="isUrgent">
+        <template #default="scope">
+          <dict-tag :options="sys_yes_no" :value="scope.row.isUrgent"/>
+        </template>
+      </el-table-column>
       <el-table-column label="是否已生产" align="center" prop="isProduced">
         <template #default="scope">
           <dict-tag :options="sys_yes_no" :value="scope.row.isProduced"/>
@@ -221,12 +236,6 @@
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="更新者" align="center" prop="updateBy"/>
-      <el-table-column label="更新时间" align="center" prop="updateTime" width="180">
-        <template #default="scope">
-          <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -303,6 +312,16 @@
         </el-form-item>
         <el-form-item label="是否优先生产" prop="isPriority">
           <el-radio-group v-model="form.isPriority">
+            <el-radio
+                v-for="dict in sys_yes_no"
+                :key="dict.value"
+                :label="dict.value"
+            >{{ dict.label }}
+            </el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="是否加急" prop="isUrgent">
+          <el-radio-group v-model="form.isUrgent">
             <el-radio
                 v-for="dict in sys_yes_no"
                 :key="dict.value"
@@ -415,6 +434,7 @@ const data = reactive({
     weightKg: null,
     deliveryDate: null,
     isPriority: null,
+    isUrgent: null,
     isProduced: null,
     productionDate: null,
     remark: null,
@@ -442,6 +462,9 @@ const data = reactive({
     ],
     isPriority: [
       {required: true, message: "是否优先生产不能为空", trigger: "change"}
+    ],
+    isUrgent: [
+      {required: true, message: "是否加急不能为空", trigger: "change"}
     ],
     isProduced: [
       {required: true, message: "是否已生产不能为空", trigger: "change"}
@@ -481,6 +504,7 @@ function reset() {
     weightKg: null,
     deliveryDate: null,
     isPriority: null,
+    isUrgent: null,
     isProduced: null,
     productionDate: null,
     remark: null,
