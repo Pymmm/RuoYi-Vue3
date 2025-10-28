@@ -174,7 +174,7 @@
             plain
             icon="Upload" v
             @click="handleImport"
-            v-hasPermi="['mdm:productionOrder:add']"
+            v-hasPermi="['mdm:productionOrder:import']"
         >导入
         </el-button>
       </el-col>
