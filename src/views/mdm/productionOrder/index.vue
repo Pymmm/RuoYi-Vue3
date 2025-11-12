@@ -440,6 +440,8 @@ const data = reactive({
     remark: null,
     createBy: null,
     createTime: null,
+    orderByColumn: "id",
+    isAsc: "desc"
   },
   rules: {
     orderDate: [
