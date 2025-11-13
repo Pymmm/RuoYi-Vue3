@@ -440,8 +440,8 @@ const data = reactive({
     remark: null,
     createBy: null,
     createTime: null,
-    orderByColumn: "id",
-    isAsc: "desc"
+    orderByColumn: "id", // 新增：按照id排序
+    isAsc: "desc" // 新增：倒序
   },
   rules: {
     orderDate: [
